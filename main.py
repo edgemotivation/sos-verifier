@@ -13,7 +13,15 @@ async def run_screenshot(req: Request):
     if not business_name or not state or not opportunity_id:
         return {"error": "Missing required fields"}
 
-    result = await capture_screenshot(business_name, state, opportunity_id)
-    return {"status": "success" if result else "failure"}
+    image_base64 = await capture_screenshot(business_name, state, opportunity_id)
+    if not image_base64:
+        return {"status": "failure"}
+
+    return {
+        "status": "success",
+        "filename": f"{opportunity_id}_sos.png",
+        "imageBase64": image_base64
+    }
+
 
 
