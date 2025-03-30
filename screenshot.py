@@ -1,5 +1,7 @@
 from playwright.async_api import async_playwright
 import asyncio
+import base64
+import os
 
 async def capture_screenshot(business_name, state, opportunity_id):
     try:
@@ -12,15 +14,23 @@ async def capture_screenshot(business_name, state, opportunity_id):
                 await page.fill('input[placeholder="Search by entity name"]', business_name)
                 await page.press('input[placeholder="Search by entity name"]', "Enter")
                 await page.wait_for_timeout(3000)
-                await page.screenshot(path=f"{opportunity_id}_sos.png")
+                filename = f"{opportunity_id}_sos.png"
+                await page.screenshot(path=filename)
             else:
                 print(f"Unsupported state: {state}")
-                return False
+                return None
 
             await browser.close()
-            return True
+
+        # Read and encode file
+        with open(filename, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+
+        os.remove(filename)
+        return encoded_string
+
     except Exception as e:
         print(f"Error: {str(e)}")
-        return False
+        return None
 
 
