@@ -1,26 +1,26 @@
-from playwright.sync_api import sync_playwright
-import os
+from playwright.async_api import async_playwright
+import asyncio
 
-def capture_screenshot(business_name, state, opportunity_id):
+async def capture_screenshot(business_name, state, opportunity_id):
     try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch()
-            page = browser.new_page()
+        async with async_playwright() as p:
+            browser = await p.chromium.launch()
+            page = await browser.new_page()
 
             if state.upper() == 'CA':
-                page.goto('https://bizfileonline.sos.ca.gov/search/business')
-                page.fill('input[placeholder="Search by entity name"]', business_name)
-                page.press('input[placeholder="Search by entity name"]', 'Enter')
-                page.wait_for_timeout(3000)  # wait for results
-                page.screenshot(path=f'{opportunity_id}_sos.png')
+                await page.goto("https://bizfileonline.sos.ca.gov/search/business")
+                await page.fill('input[placeholder="Search by entity name"]', business_name)
+                await page.press('input[placeholder="Search by entity name"]', "Enter")
+                await page.wait_for_timeout(3000)
+                await page.screenshot(path=f"{opportunity_id}_sos.png")
             else:
-                print(f'Unsupported state: {state}')
+                print(f"Unsupported state: {state}")
                 return False
 
-            browser.close()
-        return True
+            await browser.close()
+            return True
     except Exception as e:
-        print(f'Error: {str(e)}')
+        print(f"Error: {str(e)}")
         return False
 
 
