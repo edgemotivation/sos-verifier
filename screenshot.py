@@ -20,6 +20,7 @@ def capture_screenshot(business_name, state, opportunity_id):
             browser.close()
         return True
     except Exception as e:
-        print(f'Error: {e}')
+        print(f'Error: {str(e)}')
         return False
+
 
